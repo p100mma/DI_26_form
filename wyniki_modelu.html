@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wyniki modelu</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:850px;margin:24px auto;padding:0 18px;font-size:18px}
+h1{font-size:28px} h2{margin:28px 0 8px;font-size:22px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #aaa;padding:8px;text-align:center}
+th:first-child,td:first-child{text-align:left;width:42%}
+input{width:110px;padding:7px;font-size:17px;box-sizing:border-box}
+button{padding:10px 18px;font-size:17px;margin:20px 8px 0 0;cursor:pointer}
+.note{color:#555;font-size:15px}
+</style>
+</head>
+<body>
+<h1>Wyniki modelu</h1>
+<p class="note">Wpiszcie wartości pewności pokazane przez model dla obu klas. Można wpisywać 0–1 albo 0–100.</p>
+
+<h2>zad1</h2>
+<table>
+<tr><th></th><th>pewność (klasa 1)</th><th>pewność (klasa 2)</th></tr>
+<tr><td>test_klasaPIERWSZA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+<tr><td>test_klasaDRUGA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+</table>
+
+<h2>zad2</h2>
+<table>
+<tr><th></th><th>pewność (klasa 1)</th><th>pewność (klasa 2)</th></tr>
+<tr><td>test1</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+<tr><td>test2</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+</table>
+
+<h2>zad3</h2>
+<table>
+<tr><th></th><th>pewność (klasa 1)</th><th>pewność (klasa 2)</th></tr>
+<tr><td>test1_klasaPIERWSZA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+<tr><td>test2_klasaPIERWSZA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+<tr><td>test3_klasaPIERWSZA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+<tr><td>test1_klasaDRUGA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+<tr><td>test2_klasaDRUGA</td><td><input type="number" step="any"></td><td><input type="number" step="any"></td></tr>
+</table>
+
+<button onclick="clearAll()">WYCZYŚĆ</button>
+<button onclick="saveCSV()">ZAPISZ WYNIKI CSV</button>
+<div id="msg"></div>
+
+<script>
+function clearAll(){
+  document.querySelectorAll('input').forEach(x=>x.value='');
+  document.getElementById('msg').textContent='';
+}
+function saveCSV(){
+  const rows=[];
+  const tables=document.querySelectorAll('table');
+  tables.forEach((t,si)=>{
+    const name='zad'+(si+1);
+    [...t.rows].slice(1).forEach(r=>{
+      const inp=r.querySelectorAll('input');
+      rows.push([name,r.cells[0].textContent,inp[0].value,inp[1].value]);
+    });
+  });
+  const csv='zadanie;test;pewność (klasa 1);pewność (klasa 2)\n'+
+    rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(';')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='wyniki_modelu.csv'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  document.getElementById('msg').textContent='Wyniki zapisane.';
+}
+</script>
+</body>
+</html>
